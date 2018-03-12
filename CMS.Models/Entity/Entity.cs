@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CMS.Base.Models.Entity
 {
-    public class Entity : DbObject
+    public class Entity : RecordBase
     {
         public Guid? DefinitionId { get; set; }
         public List<Property> Properties { get; set; } = new List<Property>();

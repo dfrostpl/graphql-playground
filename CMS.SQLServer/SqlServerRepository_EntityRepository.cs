@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CMS.Base.Models.Definition;
 using CMS.Base.Models.Entity;
 using CMS.Base.ProviderContracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Providers.SQLServer
 {
@@ -11,24 +13,23 @@ namespace CMS.Providers.SQLServer
     {
         public virtual IEntityRepository Entities => this;
 
-        private readonly List<Entity> _entities = new List<Entity>();
-        Entity IEntityRepository.Single(Guid id)
+        Task<Entity> IEntityRepository.Single(Guid id)
         {
-            return _entities.FirstOrDefault(e => e.Id == id);
+            return Context.Entities.Include(e=>e.Properties).Include(e=>e.Relations).AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        IEnumerable<Entity> IEntityRepository.Many(string definitionName)
+        Task<List<Entity>> IEntityRepository.Many(string definitionName)
         {
             var definition = Definitions.Single(definitionName);
             return Entities.Many(definition.Id);
         }
 
-        IEnumerable<Entity> IEntityRepository.Many(Guid definitionId)
+        Task<List<Entity>> IEntityRepository.Many(Guid definitionId)
         {
-            return _entities.Where(e => e.DefinitionId == definitionId);
+            return Context.Entities.AsNoTracking().Include(e=>e.Properties).Include(e=>e.Relations).Where(e => e.DefinitionId == definitionId).ToListAsync();
         }
 
-        Entity IEntityRepository.Create(Definition definition)
+        async Task<Entity> IEntityRepository.Create(Definition definition)
         {
             var entity = new Entity
             {
@@ -53,13 +54,14 @@ namespace CMS.Providers.SQLServer
                     RelateDefinitionId = definitionRelation.RelatedDefinitionId
                 });
             }
-            _entities.Add(entity);
+            await Context.Entities.AddAsync(entity).ConfigureAwait(false);
+            await Context.SaveChangesAsync().ConfigureAwait(false);
             return entity;
         }
 
-        void IEntityRepository.Update(Entity entity)
+        async Task IEntityRepository.Update(Entity entity)
         {
-            var dbEntity = Entities.Single(entity.Id);
+            var dbEntity = await Entities.Single(entity.Id).ConfigureAwait(false);
             dbEntity.Properties = entity.Properties;
             dbEntity.Relations = entity.Relations;
         }

@@ -6,7 +6,7 @@ namespace CMS.Base.GraphQL.Fields
 {
     public static class DefaultFields
     {
-        public static void UseDbObjectFields<T>(this ObjectGraphType<T> query) where T : DbObject
+        public static void UseDbObjectFields<T>(this ObjectGraphType<T> query) where T : RecordBase
         {
             query.Field(e => e.Id, type: typeof(GuidGraphType)).Description("The id of the record");
             query.Field(e => e.CreatedAt).Description("Date of record creation");

@@ -2,7 +2,7 @@
 
 namespace CMS.Base.Models.Definition
 {
-    public class Definition : DbObject
+    public class Definition : RecordBase
     {
         public string Name { get; set; }
         public List<PropertyDefinition> Properties { get; set; } = new List<PropertyDefinition>();
