@@ -4,9 +4,9 @@ using CMS.Base.GraphQL.Types;
 using CMS.Base.ProviderContracts;
 using GraphQL.Types;
 
-namespace CMS.Base.GraphQL.Queries
+namespace CMS.Base.GraphQL.Fields
 {
-    public static class DefinitionQueryList
+    public static class DefinitionFields
     {
         public static void UseDefinitionQuery(this ObjectGraphType query)
         {

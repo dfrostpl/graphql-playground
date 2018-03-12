@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using CMS.Base.GraphQL.Fields;
+using GraphQL.Types;
 
 namespace CMS.Base.GraphQL.Queries
 {

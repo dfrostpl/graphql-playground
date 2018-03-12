@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CMS.Base.GraphQL.Fields;
 using CMS.Base.GraphQL.ScalarTypes;
 using CMS.Base.Models.Entity;
 using GraphQL.Types;
@@ -11,9 +12,7 @@ namespace CMS.Base.GraphQL.Types
         public EntityType()
         {
             Name = "Entity";
-            Field(e => e.Id, type: typeof(GuidGraphType)).Description("The id of the record");
-            Field(e => e.CreatedAt).Description("Date of record creation");
-            Field(e => e.ModifiedAt, true).Description("Date of last record modification");
+            this.UseDbObjectFields();
             Field(e => e.DefinitionId, type: typeof(GuidGraphType)).Description("The id of definition");
             Field(
                 name: "properties",
