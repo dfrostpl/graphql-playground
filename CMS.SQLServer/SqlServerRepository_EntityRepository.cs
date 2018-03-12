@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CMS.Base.Data;
-using CMS.Models.Definition;
-using CMS.Models.Entity;
+using CMS.Base.Models.Definition;
+using CMS.Base.Models.Entity;
+using CMS.Base.ProviderContracts;
 
-namespace CMS.SQLServer
+namespace CMS.Providers.SQLServer
 {
     public partial class SqlServerRepository : IEntityRepository
     {
@@ -39,10 +39,18 @@ namespace CMS.SQLServer
             };
             foreach (var definitionProperty in definition.Properties)
             {
-                entity.Properties.Add(new EntityMember
+                entity.Properties.Add(new Property
                 {
                     Name = definitionProperty.Name,
                     Type = definitionProperty.Type
+                });
+            }
+            foreach (var definitionRelation in definition.Relations)
+            {
+                entity.Relations.Add(new Relation
+                {
+                    Name = definitionRelation.Name,
+                    RelateDefinitionId = definitionRelation.RelatedDefinitionId
                 });
             }
             _entities.Add(entity);
@@ -53,6 +61,7 @@ namespace CMS.SQLServer
         {
             var dbEntity = Entities.Single(entity.Id);
             dbEntity.Properties = entity.Properties;
+            dbEntity.Relations = entity.Relations;
         }
     }
 }

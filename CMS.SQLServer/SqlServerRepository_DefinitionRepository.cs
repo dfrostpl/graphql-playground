@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CMS.Base.Data;
-using CMS.Models.Definition;
+using CMS.Base.Models.Definition;
+using CMS.Base.ProviderContracts;
 
-namespace CMS.SQLServer
+namespace CMS.Providers.SQLServer
 {
     public partial class SqlServerRepository : IDefinitionRepository
     {
@@ -45,6 +45,7 @@ namespace CMS.SQLServer
             var dbDefinition = Definitions.Single(definition.Id);
             dbDefinition.Name = definition.Name;
             dbDefinition.Properties = definition.Properties;
+            dbDefinition.Relations = definition.Relations;
         }
     }
 }

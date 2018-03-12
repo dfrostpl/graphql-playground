@@ -14,9 +14,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
-    <ProjectReference Include="..\CMS.GraphQL\CMS.GraphQL.csproj" />
-    <ProjectReference Include="..\CMS.Models\CMS.Models.csproj" />
-    <ProjectReference Include="..\CMS.SQLServer\CMS.SQLServer.csproj" />
+    <ProjectReference Include="..\CMS.GraphQL\CMS.Base.GraphQL.csproj" />
+    <ProjectReference Include="..\CMS.Models\CMS.Base.Models.csproj" />
+    <ProjectReference Include="..\CMS.SQLServer\CMS.Providers.SQLServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

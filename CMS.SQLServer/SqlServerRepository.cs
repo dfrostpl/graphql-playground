@@ -1,6 +1,6 @@
-﻿using CMS.Base.Data;
+﻿using CMS.Base.ProviderContracts;
 
-namespace CMS.SQLServer
+namespace CMS.Providers.SQLServer
 {
     public partial class SqlServerRepository : IRepository
     {

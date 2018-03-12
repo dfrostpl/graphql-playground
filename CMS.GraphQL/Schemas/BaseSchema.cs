@@ -1,7 +1,7 @@
-﻿using CMS.GraphQL.Queries;
+﻿using CMS.Base.GraphQL.Queries;
 using GraphQL.Types;
 
-namespace CMS.GraphQL.Schemas
+namespace CMS.Base.GraphQL.Schemas
 {
     public class BaseSchema : Schema
     {

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace CMS.Models.Definition
+namespace CMS.Base.Models.Definition
 {
     public class Definition : DbObject
     {
         public string Name { get; set; }
-        public List<DefinitionMember> Properties { get; set; } = new List<DefinitionMember>();
+        public List<PropertyDefinition> Properties { get; set; } = new List<PropertyDefinition>();
+        public List<RelationDefinition> Relations { get; set; } = new List<RelationDefinition>();
     }
 }

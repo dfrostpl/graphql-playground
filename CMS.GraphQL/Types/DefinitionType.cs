@@ -1,8 +1,8 @@
-﻿using CMS.GraphQL.ScalarTypes;
-using CMS.Models.Definition;
+﻿using CMS.Base.GraphQL.ScalarTypes;
+using CMS.Base.Models.Definition;
 using GraphQL.Types;
 
-namespace CMS.GraphQL.Types
+namespace CMS.Base.GraphQL.Types
 {
     public class DefinitionType : ObjectGraphType<Definition>
     {
@@ -13,7 +13,8 @@ namespace CMS.GraphQL.Types
             Field(e => e.CreatedAt).Description("Date of record creation");
             Field(e => e.ModifiedAt, true).Description("Date of last record modification");
             Field(d => d.Name).Description("Definition name");
-            Field(name: "properties", type: typeof(ListGraphType<DefinitionMemberType>), resolve: context=>context.Source.Properties);
+            Field(name: "properties", type: typeof(ListGraphType<PropertyDefinitionType>), resolve: context=>context.Source.Properties);
+            Field(name: "relations", type: typeof(ListGraphType<RelationDefinitionType>), resolve: context => context.Source.Relations);
         }
     }
 }

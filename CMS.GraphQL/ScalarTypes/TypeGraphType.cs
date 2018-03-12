@@ -2,7 +2,7 @@
 using GraphQL.Language.AST;
 using GraphQL.Types;
 
-namespace CMS.GraphQL.ScalarTypes
+namespace CMS.Base.GraphQL.ScalarTypes
 {
     public class TypeGraphType : ScalarGraphType
     {

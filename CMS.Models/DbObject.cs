@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CMS.Models
+namespace CMS.Base.Models
 {
     public abstract class DbObject
     {

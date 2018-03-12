@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace CMS.GraphQL
+﻿namespace CMS.Base.GraphQL
 {
     public class GraphQLParameter
     {
