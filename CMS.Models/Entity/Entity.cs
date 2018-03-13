@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CMS.Base.Models.Definition;
 
 namespace CMS.Base.Models.Entity
 {
@@ -30,15 +31,21 @@ namespace CMS.Base.Models.Entity
         public void AddRelation(string name, Guid relatedEntityId)
         {
             var relation = GetRelation(name);
-            if (relation != null && relatedEntityId != Guid.Empty && !relation.ParentIds.Contains(relatedEntityId))
-                relation.ParentIds.Add(relatedEntityId);
+            if (relation != null && relatedEntityId != Guid.Empty)
+                if (relation.Role == RelationRole.Child && !relation.ParentIds.Contains(relatedEntityId))
+                    relation.ParentIds.Add(relatedEntityId);
+                else if (relation.Role == RelationRole.Parent && !relation.ChildIds.Contains(relatedEntityId))
+                    relation.ChildIds.Add(relatedEntityId);
         }
 
         public void SetRelations(string name, List<Guid> relatedEntityIds)
         {
             var relation = GetRelation(name);
             if (relation != null && relatedEntityIds != null)
-                relation.ParentIds = relatedEntityIds;
+                if (relation.Role == RelationRole.Child)
+                    relation.ParentIds = relatedEntityIds;
+                else if (relation.Role == RelationRole.Parent)
+                    relation.ChildIds = relatedEntityIds;
         }
     }
 }
