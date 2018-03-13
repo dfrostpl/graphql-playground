@@ -11,7 +11,7 @@ namespace CMS.Base.GraphQL.Types
             Field("name", r => r.Name).Description("Relation name");
             Field(name: "relatedDefinitionId", type: typeof(GuidGraphType), resolve: context => context.Source.RelatedDefinitionId, description: "Definition ID of related record");
             Field(name: "cardinality", type: typeof(EnumerationGraphType<RelationCardinality>), resolve: context => context.Source.Cardinality, description: "Cardinality");
-            Field(name: "type", type: typeof(EnumerationGraphType<Models.Definition.RelationshipType>), resolve: context => context.Source.RelationType, description: "Relation type");
+            Field(name: "role", type: typeof(EnumerationGraphType<RelationRole>), resolve: context => context.Source.Role, description: "Relation role");
         }
     }
 }

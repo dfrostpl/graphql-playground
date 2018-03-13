@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace CMS.Providers.SQLServer.Configuration
+namespace CMS.Providers.SQL.Configuration
 {
-    public class SqlServerConfiguration
+    public class SqlConfiguration
     {
         [JsonProperty("connectionString")]
         public string ConnectionString { get; set; }

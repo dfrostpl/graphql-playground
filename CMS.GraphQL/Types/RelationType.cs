@@ -11,11 +11,11 @@ namespace CMS.Base.GraphQL.Types
         public RelationType()
         {
             Field("name", r => r.Name).Description("Name of relation");
-            Field(name: "relatedEntitiesIds", type: typeof(ListGraphType<GuidGraphType>), resolve: context => context.Source.RelatedEntitiesIds, description: "Related entities IDs");
+            Field(name: "relatedEntitiesIds", type: typeof(ListGraphType<GuidGraphType>), resolve: context => context.Source.ParentIds, description: "Related entities IDs");
             Field(name: "entities", type: typeof(ListGraphType<EntityType>), resolve: context =>
             {
                 var repository = (IRepository)context.UserContext;
-                return repository.Entities.Many(context.Source.RelateDefinitionId.Value).Where(entity => context.Source.RelatedEntitiesIds.Contains(entity.Id));
+                return repository.Entities.Many(context.Source.RelatedDefinitionId, context.Source.ParentIds).Result;
             }, description: "Related entities");
         }
     }

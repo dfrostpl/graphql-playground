@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CMS.Providers.SQLServer.Adapters
+namespace CMS.Providers.SQL.Adapters
 {
-    internal abstract class SqlServerEntityBase
+    public abstract class SqlEntityBase
     {
         public Guid Id { get; set; }
         public DateTime ModifiedAt { get; set; }

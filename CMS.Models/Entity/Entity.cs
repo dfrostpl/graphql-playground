@@ -6,7 +6,7 @@ namespace CMS.Base.Models.Entity
 {
     public class Entity : RecordBase
     {
-        public Guid? DefinitionId { get; set; }
+        public Guid DefinitionId { get; set; }
         public List<Property> Properties { get; set; } = new List<Property>();
         public List<Relation> Relations { get; set; } = new List<Relation>();
 
@@ -30,15 +30,15 @@ namespace CMS.Base.Models.Entity
         public void AddRelation(string name, Guid relatedEntityId)
         {
             var relation = GetRelation(name);
-            if (relation != null && relatedEntityId != Guid.Empty && !relation.RelatedEntitiesIds.Contains(relatedEntityId))
-                relation.RelatedEntitiesIds.Add(relatedEntityId);
+            if (relation != null && relatedEntityId != Guid.Empty && !relation.ParentIds.Contains(relatedEntityId))
+                relation.ParentIds.Add(relatedEntityId);
         }
 
         public void SetRelations(string name, List<Guid> relatedEntityIds)
         {
             var relation = GetRelation(name);
             if (relation != null && relatedEntityIds != null)
-                relation.RelatedEntitiesIds = relatedEntityIds;
+                relation.ParentIds = relatedEntityIds;
         }
     }
 }

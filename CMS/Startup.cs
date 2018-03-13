@@ -3,7 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CMS.Base;
 using CMS.Base.GraphQL;
-using CMS.Providers.SQLServer;
+using CMS.Providers.SQL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
