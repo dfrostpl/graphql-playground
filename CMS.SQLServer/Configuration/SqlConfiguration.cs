@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace CMS.Providers.SQL.Configuration
 {
@@ -6,5 +7,7 @@ namespace CMS.Providers.SQL.Configuration
     {
         [JsonProperty("connectionString")]
         public string ConnectionString { get; set; }
+        [JsonProperty("queries")]
+        public List<SqlQueryConfiguration> Queries { get; set; } = new List<SqlQueryConfiguration>();
     }
 }

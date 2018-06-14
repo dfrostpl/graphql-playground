@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CMS.Base.Abstractions;
 using CMS.Base.GraphQL;
 using CMS.Base.GraphQL.Schemas;
-using CMS.Base.ProviderContracts;
 using GraphQL;
 using Microsoft.AspNetCore.Mvc;
 

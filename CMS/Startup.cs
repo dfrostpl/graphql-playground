@@ -27,7 +27,7 @@ namespace CMS.Portal
             services.AddMvc();
             var builder = new ContainerBuilder();
             builder.Populate(services);
-            builder.RegisterModule(new SqlServerProviderModule(Configuration));
+            builder.RegisterModule(new SqlProviderModule(Configuration));
             builder.RegisterModule(new GraphQLModule());
             Application.Container = builder.Build();
             return Application.Container.Resolve<IServiceProvider>();

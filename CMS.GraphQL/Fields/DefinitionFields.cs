@@ -1,7 +1,7 @@
 ﻿using System;
+using CMS.Base.Abstractions;
 using CMS.Base.GraphQL.ScalarTypes;
 using CMS.Base.GraphQL.Types;
-using CMS.Base.ProviderContracts;
 using GraphQL.Types;
 
 namespace CMS.Base.GraphQL.Fields
@@ -21,7 +21,7 @@ namespace CMS.Base.GraphQL.Fields
                 {
                     var repository = (IRepository)context.UserContext;
                     var id = context.GetArgument<Guid>("id");
-                    return repository.Definitions.Single(id);
+                    return repository.Definitions.SingleAsync(id);
                 });
         }
 
@@ -31,7 +31,7 @@ namespace CMS.Base.GraphQL.Fields
                 resolve: context =>
                 {
                     var repository = (IRepository)context.UserContext;
-                    return repository.Definitions.Many();
+                    return repository.Definitions.ManyAsync();
                 });
         }
     }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using CMS.Base.Helpers;
 using CMS.Providers.SQL.Adapters.Definition;
 using CMS.Providers.SQL.Adapters.Entity;
 using CMS.Providers.SQL.Configuration;
+using CMS.Providers.SQL.Exceptions;
 using CMS.Providers.SQL.Extensions;
 using CMS.Providers.SQL.Queries;
 using Dapper;
@@ -21,80 +24,151 @@ namespace CMS.Providers.SQL.Context
             _configuration = configuration;
         }
 
-        public async Task<DefinitionAdapter> QueryDefinitionById(Guid id)
+        public async Task<DefinitionAdapter> QueryDefinitionByIdAsync(Guid id)
         {
-            using (var connection = GetConnection())
+            try
             {
-                var definition = await connection.QueryFirstOrDefaultAsync<DefinitionAdapter>(DefinitionQueries.DefinitionByIdQuery, new {Id = id.ToString()})
-                    .ConfigureAwait(false);
-                return definition == null ? null : await LoadDefinition(connection, definition).ConfigureAwait(false);
+                using (var connection = GetConnection())
+                {
+                    var queryConfig = _configuration.Queries.FindByName(Constants.Queries.GetDefinitionById);
+                    Guard.NotNull(queryConfig, new SqlProviderConfigurationException($"Query configuration for {Constants.Queries.GetDefinitionById} not found"));
+                    var definitionIdParam = queryConfig.Parameters[Constants.Parameters.DefinitionId]?.ToObject<string>();
+                    var procedureNameParam = queryConfig.Parameters[Constants.Parameters.ProcedureName]?.ToObject<string>();
+                    Guard.NotEmptyString(definitionIdParam, new SqlProviderConfigurationException($"Query {Constants.Queries.GetDefinitionById} has wrong configuration for {Constants.Parameters.DefinitionId} parameter."));
+                    Guard.NotEmptyString(procedureNameParam, new SqlProviderConfigurationException($"Query {Constants.Queries.GetDefinitionById} has wrong configuration for {Constants.Parameters.ProcedureName} parameter."));
+                    var parameters = new DynamicParameters();
+                    parameters.Add(definitionIdParam, id.ToString());
+                    var definition = connection.Query<DefinitionAdapter>(procedureNameParam, parameters, commandType:CommandType.StoredProcedure).FirstOrDefault();
+                    return definition == null ? null : await LoadDefinitionAsync(connection, definition).ConfigureAwait(false);
+                }
+            }
+            catch (Exception)
+            {
+                //logging
+                throw;
             }
         }
 
-        public async Task<DefinitionAdapter> QueryDefinitionByName(string name)
+        public async Task<DefinitionAdapter> QueryDefinitionByNameAsync(string name)
         {
-            using (var connection = GetConnection())
+            try
             {
-                var definition = await connection.QueryFirstOrDefaultAsync<DefinitionAdapter>(DefinitionQueries.DefinitionByNameQuery, new {name}).ConfigureAwait(false);
-                return definition == null ? null : await LoadDefinition(connection, definition).ConfigureAwait(false);
+                using (var connection = GetConnection())
+                {
+                    var queryConfig = _configuration.Queries.FindByName(Constants.Queries.GetDefinitionByName);
+                    Guard.NotNull(queryConfig, new SqlProviderConfigurationException($"Query configuration for {Constants.Queries.GetDefinitionByName} not found"));
+                    var definitionNameParam = queryConfig.Parameters[Constants.Parameters.DefinitionName]?.ToObject<string>();
+                    var procedureNameParam = queryConfig.Parameters[Constants.Parameters.ProcedureName]?.ToObject<string>();
+                    Guard.NotEmptyString(definitionNameParam, new SqlProviderConfigurationException($"Query {Constants.Queries.GetDefinitionByName} has wrong configuration for {Constants.Parameters.DefinitionName} parameter."));
+                    Guard.NotEmptyString(procedureNameParam, new SqlProviderConfigurationException($"Query {Constants.Queries.GetDefinitionByName} has wrong configuration for {Constants.Parameters.ProcedureName} parameter."));
+                    var parameters = new DynamicParameters();
+                    parameters.Add(definitionNameParam, name);
+                    var definition = connection.Query<DefinitionAdapter>(procedureNameParam, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    return definition == null ? null : await LoadDefinitionAsync(connection, definition).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                //logging
+                throw;
             }
         }
 
-        public async Task<List<DefinitionAdapter>> QueryDefinitionsById(Guid[] ids)
+        public async Task<List<DefinitionAdapter>> QueryDefinitionsByIdAsync(Guid[] ids)
         {
-            using (var connection = GetConnection())
+            try
             {
-                var definitions = (await connection.QueryAsync<DefinitionAdapter>(DefinitionQueries.DefinitionsByIdsQuery, new {Ids = ids.Select(i => i.ToString()).Distinct()})
-                    .ConfigureAwait(false)).ToList();
-                foreach (var definitionAdapter in definitions)
-                    await LoadDefinition(connection, definitionAdapter).ConfigureAwait(false);
-                return definitions;
+                using (var connection = GetConnection())
+                {
+                    var definitions = (await connection.QueryAsync<DefinitionAdapter>(DefinitionQueries.DefinitionsByIdsQuery, new {Ids = ids.Select(i => i.ToString()).Distinct()})
+                        .ConfigureAwait(false)).ToList();
+                    foreach (var definitionAdapter in definitions)
+                        await LoadDefinitionAsync(connection, definitionAdapter).ConfigureAwait(false);
+                    return definitions;
+                }
+            }
+            catch (Exception ex)
+            {
+                //logging
+                throw;
             }
         }
 
-        public async Task<List<DefinitionAdapter>> QueryAllDefinitions()
+        public async Task<List<DefinitionAdapter>> QueryAllDefinitionsAsync()
         {
-            using (var connection = GetConnection())
+            try
             {
-                return (await connection.QueryAsync<DefinitionAdapter>(DefinitionQueries.AllDefinitions).ConfigureAwait(false)).ToList();
+                using (var connection = GetConnection())
+                {
+                    return (await connection.QueryAsync<DefinitionAdapter>(DefinitionQueries.AllDefinitions).ConfigureAwait(false)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                //logging
+                throw;
             }
         }
 
-        public async Task<EntityAdapter> QueryEntityById(Guid id, string[] propertiesToLoad = null, string[] relationsToLoad = null)
+        public async Task<EntityAdapter> QueryEntityByIdAsync(Guid id, string[] propertiesToLoad = null, string[] relationsToLoad = null)
         {
-            using (var connection = GetConnection())
+            try
             {
-                var entity = await connection.QueryFirstOrDefaultAsync<EntityAdapter>(EntityQueries.EntityByIdQuery, new {Id = id.ToString()}).ConfigureAwait(false);
-                return entity == null ? null : await LoadEntity(connection, entity, propertiesToLoad, relationsToLoad).ConfigureAwait(false);
+                using (var connection = GetConnection())
+                {
+                    var entity = await connection.QueryFirstOrDefaultAsync<EntityAdapter>(EntityQueries.EntityByIdQuery, new {Id = id.ToString()}).ConfigureAwait(false);
+                    return entity == null ? null : await LoadEntityAsync(connection, entity, propertiesToLoad, relationsToLoad).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                //logging
+                throw;
             }
         }
 
-        public async Task<List<EntityAdapter>> QueryEntitiesByIds(Guid[] ids, string[] propertiesToLoad = null, string[] relationsToLoad = null)
+        public async Task<List<EntityAdapter>> QueryEntitiesByIdsAsync(Guid[] ids, string[] propertiesToLoad = null, string[] relationsToLoad = null)
         {
-            using (var connection = GetConnection())
+            try
             {
-                var entities = (await connection.QueryAsync<EntityAdapter>(EntityQueries.EntitiesByIdsQuery, new {Ids = ids.Select(i => i.ToString()).Distinct()})
-                        .ConfigureAwait(false))
-                    .ToList();
-                foreach (var entityAdapter in entities)
-                    await LoadEntity(connection, entityAdapter, propertiesToLoad, relationsToLoad).ConfigureAwait(false);
-                return entities;
+                using (var connection = GetConnection())
+                {
+                    var entities = (await connection.QueryAsync<EntityAdapter>(EntityQueries.EntitiesByIdsQuery, new {Ids = ids.Select(i => i.ToString()).Distinct()})
+                            .ConfigureAwait(false))
+                        .ToList();
+                    foreach (var entityAdapter in entities)
+                        await LoadEntityAsync(connection, entityAdapter, propertiesToLoad, relationsToLoad).ConfigureAwait(false);
+                    return entities;
+                }
+            }
+            catch (Exception ex)
+            {
+                //logging
+                throw;
             }
         }
 
-        public async Task<List<EntityAdapter>> QueryEntitiesByDefinitionId(Guid definitionId, string[] propertiesToLoad = null, string[] relationsToLoad = null)
+        public async Task<List<EntityAdapter>> QueryEntitiesByDefinitionIdAsync(Guid definitionId, string[] propertiesToLoad = null, string[] relationsToLoad = null)
         {
-            using (var connection = GetConnection())
+            try
             {
-                var entities = (await connection.QueryAsync<EntityAdapter>(EntityQueries.EntitiesByDefinitionIdQuery, new {DefinitionId = definitionId.ToString()})
-                    .ConfigureAwait(false)).ToList();
-                foreach (var entityAdapter in entities)
-                    await LoadEntity(connection, entityAdapter, propertiesToLoad, relationsToLoad).ConfigureAwait(false);
-                return entities;
+                using (var connection = GetConnection())
+                {
+                    var entities = (await connection.QueryAsync<EntityAdapter>(EntityQueries.EntitiesByDefinitionIdQuery, new {DefinitionId = definitionId.ToString()})
+                        .ConfigureAwait(false)).ToList();
+                    foreach (var entityAdapter in entities)
+                        await LoadEntityAsync(connection, entityAdapter, propertiesToLoad, relationsToLoad).ConfigureAwait(false);
+                    return entities;
+                }
+            }
+            catch (Exception ex)
+            {
+                //logging
+                throw;
             }
         }
 
-        private async Task<DefinitionAdapter> LoadDefinition(SqlConnection connection, DefinitionAdapter definition)
+        private async Task<DefinitionAdapter> LoadDefinitionAsync(SqlConnection connection, DefinitionAdapter definition)
         {
             definition.Properties = (await connection.QueryAsync<PropertyDefinitionAdapter>(DefinitionQueries.PropertyDefinitionsByDefinitionIdQuery,
                 new {DefinitionId = definition.Id.ToString()}).ConfigureAwait(false))?.ToList();
@@ -103,10 +177,10 @@ namespace CMS.Providers.SQL.Context
             return definition;
         }
 
-        private async Task<EntityAdapter> LoadEntity(SqlConnection connection, EntityAdapter entity, string[] propertiesToLoad = null, string[] relationsToLoad = null)
+        private async Task<EntityAdapter> LoadEntityAsync(SqlConnection connection, EntityAdapter entity, string[] propertiesToLoad = null, string[] relationsToLoad = null)
         {
-            await entity.LoadProperties(connection, propertiesToLoad).ConfigureAwait(false);
-            await entity.LoadRelations(connection, relationsToLoad).ConfigureAwait(false);
+            await entity.LoadPropertiesAsync(connection, propertiesToLoad).ConfigureAwait(false);
+            await entity.LoadRelationsAsync(connection, relationsToLoad).ConfigureAwait(false);
             return entity;
         }
 

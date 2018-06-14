@@ -1,4 +1,4 @@
-﻿namespace CMS.Base.ProviderContracts
+﻿namespace CMS.Base.Abstractions
 {
     public interface IRepository
     {

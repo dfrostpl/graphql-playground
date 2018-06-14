@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CMS.Base.ProviderContracts;
+using CMS.Base.Abstractions;
 using CMS.Providers.SQL.Configuration;
 using CMS.Providers.SQL.Context;
 
