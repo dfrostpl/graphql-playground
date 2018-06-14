@@ -18,10 +18,11 @@ namespace CMS.Providers.SQL.Context
     public class SqlContext : ISqlContext
     {
         private readonly SqlConfiguration _configuration;
-
-        public SqlContext(SqlConfiguration configuration)
+        //private readonly ISqlRenderer _renderer;
+        public SqlContext(SqlConfiguration configuration/*, ISqlRenderer renderer*/)
         {
             _configuration = configuration;
+            //_renderer = renderer;
         }
 
         public async Task<DefinitionAdapter> QueryDefinitionByIdAsync(Guid id)
@@ -170,10 +171,11 @@ namespace CMS.Providers.SQL.Context
 
         private async Task<DefinitionAdapter> LoadDefinitionAsync(SqlConnection connection, DefinitionAdapter definition)
         {
-            definition.Properties = (await connection.QueryAsync<PropertyDefinitionAdapter>(DefinitionQueries.PropertyDefinitionsByDefinitionIdQuery,
-                new {DefinitionId = definition.Id.ToString()}).ConfigureAwait(false))?.ToList();
-            definition.Relations = (await connection.QueryAsync<RelationDefinitionAdapter>(DefinitionQueries.RelationDefinitionsByDefinitionIdQuery,
-                new {DefinitionId = definition.Id.ToString()}).ConfigureAwait(false))?.ToList();
+            //TODO: use OneToMany Dapper loader
+            var propertiesQuery = new SelectStatement(new[]{"*"}).From("PropertyDefinitions").Where("DefinitionId = @DefinitionId").ToSql(_renderer);
+            definition.Properties = (await connection.QueryAsync<PropertyDefinitionAdapter>(propertiesQuery, new {DefinitionId = definition.Id.ToString()}).ConfigureAwait(false))?.ToList();
+            var relationsQuery = new SelectStatement(new []{"*"}).From("RelationDefinitions").Where("DefinitionId = @DefinitionId").ToSql(_renderer);
+            definition.Relations = (await connection.QueryAsync<RelationDefinitionAdapter>(DefinitionQueries.RelationDefinitionsByDefinitionIdQuery, new {DefinitionId = definition.Id.ToString()}).ConfigureAwait(false))?.ToList();
             return definition;
         }
 

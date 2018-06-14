@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using CMS.Base.Abstractions;
 using CMS.Providers.SQL.Configuration;
 using CMS.Providers.SQL.Context;
@@ -18,7 +19,7 @@ namespace CMS.Providers.SQL
         protected override void Load(ContainerBuilder builder)
         {
             var sqlConfiguration = new SqlConfiguration();
-            _configuration.GetSection("sqlserver").Bind(sqlConfiguration);
+            _configuration.GetSection("sql").Bind(sqlConfiguration);
             builder.RegisterType<SqlMapperConfiguration>().AsSelf();
             builder.RegisterInstance(sqlConfiguration).SingleInstance().AsSelf();
             builder.RegisterType<SqlContext>().SingleInstance().As<ISqlContext>();
